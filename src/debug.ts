@@ -41,7 +41,7 @@ const preset = (key: string, extra: Partial<TokenData> = {}, lang: 'ja' | 'en' =
 const cases: [string, TokenData, boolean][] = [
   ['兵士 (白・テキストなし)', preset('soldier', { artist: 'Taro Yamada' }), true],
   ['スピリット (飛行)', preset('spirit'), true],
-  ['エルフ・戦士 (GW 自動=ゴールド)', preset('elfWarrior'), true],
+  ['市民 (GW 自動=ゴールド)', preset('citizen'), true],
   ['ハイブリッド WU', preset('bird', { colors: ['W', 'U'], frameStyle: 'hybrid', rules: '飛行\n{T}：カードを1枚引き、その後カードを1枚捨てる。' }), true],
   ['宝物 (アーティファクト)', preset('treasure'), false],
   ['Food (en)', preset('food', {}, 'en'), true],

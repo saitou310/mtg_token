@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { appendKeyword, applyPreset, KEYWORDS, PRESETS } from '../../model/presets';
+import { appendKeyword, KEYWORDS } from '../../model/presets';
 import type { CardLang } from '../../model/token';
 import type { SymbolName } from '../../render/text/parse';
 import { useStore } from '../../state/store';
@@ -53,25 +53,6 @@ export function TextSection() {
         />
       }
     >
-      <Field label="プリセットから始める">
-        <select
-          value=""
-          onChange={(e) => {
-            const p = PRESETS.find((x) => x.key === e.target.value);
-            if (p) update(applyPreset(p, t.lang));
-          }}
-        >
-          <option value="">選択してください…（イラストはそのまま）</option>
-          {PRESETS.map((p) => (
-            <option key={p.key} value={p.key}>
-              {p.name[t.lang]}
-              {p.pt ? ` ${p.pt[0]}/${p.pt[1]}` : ''}
-              {p.rules ? ` ・${p.rules[t.lang].slice(0, 14)}${p.rules[t.lang].length > 14 ? '…' : ''}` : ''}
-            </option>
-          ))}
-        </select>
-      </Field>
-
       <Field label="トークン名">
         <input type="text" value={t.name} onChange={(e) => update({ name: e.target.value })} placeholder="例：ゴブリン" />
       </Field>

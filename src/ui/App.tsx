@@ -65,7 +65,19 @@ export function App() {
 
       {toast && (
         <div className="toast" role="status">
-          {toast}
+          <span>{toast.message}</span>
+          {toast.action && (
+            <button
+              type="button"
+              className="toast-action"
+              onClick={() => {
+                toast.action!.run();
+                useStore.getState().dismissToast();
+              }}
+            >
+              {toast.action.label}
+            </button>
+          )}
         </div>
       )}
     </div>

@@ -6,6 +6,7 @@ import { AdvancedSection } from './AdvancedSection';
 import { ArtSection } from './ArtSection';
 import { isImageFile, setArtFromFile } from './art';
 import { ColorSection } from './ColorSection';
+import { PresetSection } from './PresetSection';
 import { Preview } from './Preview';
 import { TextSection } from './TextSection';
 
@@ -96,6 +97,7 @@ export function EditorPage() {
   return (
     <div className="editor">
       <div className="editor-form">
+        <PresetSection />
         <TextSection />
         <ColorSection />
         <ArtSection />

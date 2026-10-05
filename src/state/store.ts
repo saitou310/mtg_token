@@ -11,6 +11,12 @@ export interface QueueItem {
 
 export type Tab = 'editor' | 'library' | 'print' | 'help';
 
+export interface Toast {
+  message: string;
+  /** 「元に戻す」などのボタン */
+  action?: { label: string; run: () => void };
+}
+
 interface AppState {
   loaded: boolean;
   tab: Tab;
@@ -18,7 +24,7 @@ interface AppState {
   library: TokenData[];
   queue: QueueItem[];
   print: PrintSettings;
-  toast: string | null;
+  toast: Toast | null;
 
   setTab(tab: Tab): void;
   update(patch: Partial<TokenData>): void;
@@ -32,7 +38,8 @@ interface AppState {
   removeFromQueue(id: string): void;
   clearQueue(): void;
   setPrint(patch: Partial<PrintSettings>): void;
-  showToast(msg: string): void;
+  showToast(msg: string, action?: Toast['action']): void;
+  dismissToast(): void;
 }
 
 let toastTimer: ReturnType<typeof setTimeout> | undefined;
@@ -80,10 +87,15 @@ export const useStore = create<AppState>((set, get) => ({
   clearQueue: () => set({ queue: [] }),
   setPrint: (patch) => set((s) => ({ print: { ...s.print, ...patch } })),
 
-  showToast: (msg) => {
+  showToast: (message, action) => {
     clearTimeout(toastTimer);
-    set({ toast: msg });
-    toastTimer = setTimeout(() => set({ toast: null }), 2800);
+    set({ toast: { message, action } });
+    // ボタン付きは押す時間を考えて長めに出す
+    toastTimer = setTimeout(() => set({ toast: null }), action ? 6000 : 2800);
+  },
+  dismissToast: () => {
+    clearTimeout(toastTimer);
+    set({ toast: null });
   },
 }));
 
