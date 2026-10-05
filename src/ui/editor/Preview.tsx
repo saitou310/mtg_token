@@ -23,11 +23,12 @@ function zoomAround(t: ArtTransform, f: number, p0: Pt, p1: Pt): ArtTransform {
   return { scale, x: p1.x + (cx - p0.x) * k - REF_CENTER.x, y: p1.y + (cy - p0.y) * k - REF_CENTER.y };
 }
 
-export function Preview() {
+/** @param maxWidth 表示幅の上限（CSS px）。画面の高さに収めたいときに使う */
+export function Preview({ maxWidth = 460 }: { maxWidth?: number }) {
   const token = useStore((s) => s.token);
   const wrapRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
-  const width = Math.floor(Math.min(460, useElementWidth(wrapRef)));
+  const width = Math.floor(Math.min(maxWidth, useElementWidth(wrapRef)));
   const art = useImage(token.artId);
   const fileRef = useRef<HTMLInputElement>(null);
 

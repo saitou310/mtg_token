@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
-import { downloadFile, loadExporter } from '../../print/download';
 import { useStore } from '../../state/store';
-import { Stepper } from '../common';
+import { COMPACT_QUERY, useMediaQuery } from '../hooks';
 import { AdvancedSection } from './AdvancedSection';
 import { ArtSection } from './ArtSection';
 import { isImageFile, setArtFromFile } from './art';
 import { ColorSection } from './ColorSection';
 import { PresetSection } from './PresetSection';
 import { Preview } from './Preview';
+import { PreviewActions } from './PreviewActions';
+import { PreviewSheet } from './PreviewSheet';
 import { TextSection } from './TextSection';
 
 /** ページ全体で画像のドロップ・貼り付けを受け付ける */
@@ -67,32 +68,8 @@ function useGlobalImageInput(): boolean {
 
 export function EditorPage() {
   const dragging = useGlobalImageInput();
-  const token = useStore((s) => s.token);
-  const library = useStore((s) => s.library);
-  const { addToQueue, saveToLibrary, newToken, showToast } = useStore.getState();
-  const [count, setCount] = useState(1);
-  const [busy, setBusy] = useState(false);
-  const saved = library.find((x) => x.id === token.id);
-  const dirty = !saved || saved.updatedAt !== token.updatedAt;
-
-  const onNew = () => {
-    if (dirty && !confirm('編集中のトークンはマイトークンに保存されていません。新しく作り始めますか？')) return;
-    newToken();
-  };
-
-  const onPng = async () => {
-    setBusy(true);
-    try {
-      const { exportCardPng } = await loadExporter();
-      const f = await exportCardPng(token, true);
-      downloadFile(f, f.name);
-    } catch (e) {
-      console.error(e);
-      showToast('画像の書き出しに失敗しました');
-    } finally {
-      setBusy(false);
-    }
-  };
+  // スマホなど 1 カラムのときは、プレビューを画面下の引き出し（シート）にする
+  const compact = useMediaQuery(COMPACT_QUERY);
 
   return (
     <div className="editor">
@@ -103,28 +80,14 @@ export function EditorPage() {
         <ArtSection />
         <AdvancedSection />
       </div>
-      <aside className="editor-preview">
-        <Preview />
-        <div className="preview-actions">
-          <div className="row gap align-center">
-            <Stepper value={count} onChange={setCount} />
-            <button type="button" className="btn primary grow" onClick={() => addToQueue(token, count)}>
-              印刷リストに追加
-            </button>
-          </div>
-          <div className="row gap">
-            <button type="button" className="btn grow" onClick={saveToLibrary}>
-              {saved ? (dirty ? 'マイトークンを上書き保存' : '保存済み ✓') : 'マイトークンに保存'}
-            </button>
-            <button type="button" className="btn" onClick={onPng} disabled={busy}>
-              PNG
-            </button>
-            <button type="button" className="btn" onClick={onNew}>
-              新規
-            </button>
-          </div>
-        </div>
-      </aside>
+      {compact ? (
+        <PreviewSheet />
+      ) : (
+        <aside className="editor-preview">
+          <Preview />
+          <PreviewActions />
+        </aside>
+      )}
       {dragging && (
         <div className="drop-overlay" aria-hidden>
           <div>ドロップしてイラストに設定</div>

@@ -106,6 +106,7 @@ code {
   background: var(--header);
   color: #f6efe3;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.25s ease, box-shadow 0.25s;
 }
 .brand {
   display: flex;
@@ -926,15 +927,156 @@ code {
   .print-page {
     grid-template-columns: minmax(0, 1fr);
   }
-  .editor-preview {
-    position: static;
-    order: -1;
+  /* 下にスクロールしたらヘッダーを隠す */
+  .app-header.is-hidden {
+    transform: translateY(-100%);
+    box-shadow: none;
   }
-  .preview-wrap {
-    max-width: 380px;
-    margin: 0 auto;
-    width: 100%;
+}
+
+/* ---------- スマホ用プレビュー（画面下のバーと引き出しシート） ---------- */
+:root {
+  --bar-h: 76px;
+}
+.app:has(.sheet-bar) {
+  padding-bottom: calc(var(--bar-h) + env(safe-area-inset-bottom));
+}
+.app:has(.sheet-bar) .toast {
+  bottom: calc(var(--bar-h) + env(safe-area-inset-bottom) + 14px);
+}
+
+.sheet-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: calc(var(--bar-h) + env(safe-area-inset-bottom));
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+  border-radius: 16px 16px 0 0;
+  background: var(--header);
+  color: #f6efe3;
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.sheet-bar:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+.sheet-handle {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 40px;
+  height: 4px;
+  margin-left: -20px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.35);
+}
+/* カードの上側をバーからはみ出させて「引き上げられる」ことを見せる */
+.sheet-thumb {
+  flex: none;
+  align-self: flex-end;
+  margin-bottom: -2px;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+.sheet-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+.sheet-info strong,
+.sheet-info span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sheet-info span {
+  font-size: 0.78rem;
+  opacity: 0.8;
+}
+.sheet-info small {
+  font-size: 0.7rem;
+  opacity: 0.55;
+}
+.sheet-add {
+  flex: none;
+}
+
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(20, 16, 12, 0.55);
+  transition: opacity 0.25s;
+}
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 12px;
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px 18px 0 0;
+  background: var(--bg);
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.3);
+  transform: translateY(100%);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.sheet.open {
+  transform: translateY(0);
+}
+.sheet.animate-in {
+  animation: sheet-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
   }
+}
+.sheet-head {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 10px 16px 0;
+  touch-action: none;
+  cursor: grab;
+}
+.sheet-title {
+  font-weight: 700;
+}
+.sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 16px calc(16px + env(safe-area-inset-bottom));
+}
+.sheet-body .preview-wrap,
+.sheet-body .preview-actions {
+  width: 100%;
+  max-width: 460px;
+}
+.sheet-body .hint {
+  text-align: center;
 }
 
 @media (max-width: 600px) {

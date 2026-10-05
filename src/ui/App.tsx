@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { useStore, type Tab } from '../state/store';
+import { useHideOnScroll } from './hooks';
 import { EditorPage } from './editor/EditorPage';
 import { HelpPage } from './HelpPage';
 import { LibraryPage } from './LibraryPage';
@@ -11,6 +13,12 @@ export function App() {
   const libraryCount = useStore((s) => s.library.length);
   const toast = useStore((s) => s.toast);
   const setTab = useStore((s) => s.setTab);
+  const headerHidden = useHideOnScroll();
+
+  // 画面を切り替えたら先頭から表示する（ヘッダーも出る）
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [tab]);
 
   const tabs: { id: Tab; label: string; badge?: number }[] = [
     { id: 'editor', label: '作成' },
@@ -21,7 +29,7 @@ export function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
+      <header className={`app-header ${headerHidden ? 'is-hidden' : ''}`}>
         <div className="brand">
           <span className="brand-mark" aria-hidden />
           <span>
