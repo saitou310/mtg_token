@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { track } from '../../analytics';
 import { downloadFile, loadExporter } from '../../print/download';
 import { useStore } from '../../state/store';
 import { Stepper } from '../common';
@@ -24,6 +25,7 @@ export function PreviewActions() {
       const { exportCardPng } = await loadExporter();
       const f = await exportCardPng(token, true);
       downloadFile(f, f.name);
+      track('export_png');
     } catch (e) {
       console.error(e);
       showToast('画像の書き出しに失敗しました');

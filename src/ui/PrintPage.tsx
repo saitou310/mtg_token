@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { track } from '../analytics';
 import { SHEETS, type SheetFormat } from '../print/layouts';
 import { canShareFiles, loadExporter } from '../print/download';
 import { useStore } from '../state/store';
@@ -44,9 +45,11 @@ export function PrintPage() {
         format === 'a4' ? [await exportA4Pdf(queue, print, onProgress)] : await exportPhotoSheets(format, queue, print, onProgress);
       setProgress('保存中…');
       await deliver(files, mode, `mtg_tokens_${format}.zip`);
+      track('export_print', { format, mode, cards: total, files: files.length });
       showToast(`${files.length} 個のファイルを作成しました`);
     } catch (e) {
       console.error(e);
+      track('export_print_failed', { format, mode });
       showToast('作成に失敗しました：' + ((e as Error).message ?? ''));
     } finally {
       setProgress(null);
@@ -59,6 +62,7 @@ export function PrintPage() {
       const { deliver, exportTestSheet } = await loadExporter();
       const f = await exportTestSheet(format, print);
       await deliver([f], mode, f.name);
+      track('export_test_sheet', { format, mode });
     } catch (e) {
       console.error(e);
       showToast('作成に失敗しました：' + ((e as Error).message ?? ''));

@@ -1,3 +1,4 @@
+import { analyticsEnabled } from '../analytics';
 import { useStore } from '../state/store';
 
 export function HelpPage() {
@@ -37,6 +38,24 @@ export function HelpPage() {
           入力内容や画像はすべてお使いのブラウザの中（IndexedDB）に保存され、サーバーには送信されません。ブラウザのデータを消すと消えてしまうので、大切なトークンは「マイトークン」画面のバックアップで書き出しておいてください。
         </p>
       </section>
+
+      {analyticsEnabled && (
+        <section>
+          <h2>アクセス解析について</h2>
+          <p>
+            サイトの改善のため、Google アナリティクスで、表示された画面や操作（プリセットの選択、印刷ファイルの作成など）の回数を集計しています。Cookie
+            を使って匿名で集計しており、カードの名前や能力などの入力内容や画像は送信しません。収集されたデータは{' '}
+            <a href="https://policies.google.com/technologies/partner-sites?hl=ja" target="_blank" rel="noreferrer">
+              Google のポリシー
+            </a>
+            に基づいて管理されます。集計の対象になりたくない場合は、{' '}
+            <a href="https://tools.google.com/dlpage/gaoptout?hl=ja" target="_blank" rel="noreferrer">
+              Google アナリティクス オプトアウト アドオン
+            </a>
+            を使うか、ブラウザで Cookie をブロックしてください。
+          </p>
+        </section>
+      )}
 
       <section>
         <h2>本物らしさをもっと上げたいとき</h2>

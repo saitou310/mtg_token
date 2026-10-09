@@ -1,3 +1,4 @@
+import { track } from '../analytics';
 import { cloneToken } from '../model/token';
 import { downloadFile } from '../print/download';
 import { useStore } from '../state/store';
@@ -12,12 +13,14 @@ export function LibraryPage() {
   const onExport = async () => {
     const blob = await exportBackup(library);
     downloadFile(blob, `mtg_tokens_backup_${new Date().toISOString().slice(0, 10)}.json`);
+    track('backup_export', { count: library.length });
   };
 
   const onImport = async (f: File) => {
     try {
       const tokens = await importBackup(f);
       importToLibrary(tokens);
+      track('backup_import', { count: tokens.length });
       showToast(`${tokens.length} 件のトークンを読み込みました`);
     } catch (e) {
       showToast((e as Error).message || '読み込みに失敗しました');

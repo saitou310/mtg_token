@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { track } from '../../analytics';
 import {
   applyPreset,
   PRESET_GROUPS,
@@ -87,6 +88,7 @@ export function PresetSection() {
     const { token, update, setToken, showToast } = useStore.getState();
     const before = token;
     update(applyPreset(p, token.lang));
+    track('select_preset', { preset: p.key });
     const next = [p.key, ...recent.filter((k) => k !== p.key)].slice(0, RECENT_MAX);
     setRecent(next);
     writeRecent(next);

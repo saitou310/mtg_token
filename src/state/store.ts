@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { track } from '../analytics';
 import { cloneToken, createToken, normalizeToken, type TokenData } from '../model/token';
 import { DEFAULT_PRINT, type PrintSettings } from '../print/layouts';
 import { KEYS, load, save } from '../storage/db';
@@ -67,6 +68,7 @@ export const useStore = create<AppState>((set, get) => ({
         library: exists ? s.library.map((x) => (x.id === t.id ? t : x)) : [t, ...s.library],
       };
     });
+    track('save_token');
     get().showToast('マイトークンに保存しました');
   },
   removeFromLibrary: (id) => set((s) => ({ library: s.library.filter((x) => x.id !== id) })),
@@ -79,6 +81,8 @@ export const useStore = create<AppState>((set, get) => ({
 
   addToQueue: (t, count) => {
     set((s) => ({ queue: [...s.queue, { token: cloneToken(t), count }] }));
+    // 色と枠は選択肢なので送ってよい（名前などの入力内容は送らない）
+    track('add_to_queue', { count, colors: t.colors.join('') || 'C', frame: t.frameStyle, from: get().tab });
     get().showToast(`「${t.name || '名前なし'}」を印刷リストに ${count} 枚追加しました`);
   },
   setQueueCount: (id, count) =>
