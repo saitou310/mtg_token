@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { analyticsEnabled, trackScreen } from '../analytics';
+import { trackScreen } from '../analytics';
 import { useStore, type Tab } from '../state/store';
 import { useHideOnScroll } from './hooks';
 import { EditorPage } from './editor/EditorPage';
@@ -75,7 +75,6 @@ export function App() {
 
       <footer className="app-footer">
         非公式ファンコンテンツです。Wizards of the Coast とは関係なく、承認も受けていません。Magic: The Gathering は Wizards of the Coast LLC の商標です。画像や入力内容はこの端末のブラウザ内にのみ保存されます。
-        {analyticsEnabled && 'アクセス解析に Google アナリティクスを使用しています（詳しくは「使い方」）。'}
       </footer>
 
       {toast && (
